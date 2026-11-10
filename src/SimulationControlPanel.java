@@ -6,6 +6,7 @@ public class SimulationControlPanel extends JPanel implements ForestObserver {
 
     private JLabel statusLabel;
     private JLabel tickLabel;
+    private JLabel disasterLabel;
     private int ticks = 0;
 
     public SimulationControlPanel(
@@ -33,6 +34,12 @@ public class SimulationControlPanel extends JPanel implements ForestObserver {
         tickLabel = new JLabel("Ticks: 0");
         tickLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
         add(tickLabel);
+
+        add(Box.createVerticalStrut(10));
+
+        disasterLabel = new JLabel("Current Disaster: None");
+        disasterLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        add(disasterLabel);
 
         add(Box.createVerticalStrut(25));
 
@@ -75,4 +82,9 @@ public class SimulationControlPanel extends JPanel implements ForestObserver {
         ticks++;
         tickLabel.setText("Ticks: " + ticks);
     }
+
+    public void setCurrentDisaster(String disaster) {
+        disasterLabel.setText("Current Disaster: " + disaster);
+    }
+
 }

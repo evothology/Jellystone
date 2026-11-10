@@ -15,6 +15,8 @@ public class Forest {
 
     private Random random = new Random();
 
+    private static final int CLUSTER_SIZE = 5;
+
     private List<ForestObserver> observers = new ArrayList<>();
 
     public void addObserver(ForestObserver observer) {
@@ -41,24 +43,37 @@ public class Forest {
         rainfall = 0.2;
         aridity = 0.5;
 
-        for (int row = 0; row < rows; row++) {
+        String[][] clusterTypes = new String[(rows + CLUSTER_SIZE - 1) / CLUSTER_SIZE][(columns + CLUSTER_SIZE - 1) / CLUSTER_SIZE];
 
+// Give each cluster a random tree species
+        for (int row = 0; row < clusterTypes.length; row++) {
+            for (int col = 0; col < clusterTypes[row].length; col++) {
+                clusterTypes[row][col] = TreeFactory.randomType();
+            }
+        }
+
+// Create the cells and plant trees
+        for (int row = 0; row < rows; row++) {
             for (int col = 0; col < columns; col++) {
 
                 grid[row][col] = new Cell(row, col);
 
-                // 80% chance of there being a tree
                 if (random.nextDouble() < 0.8) {
 
                     double spreadability
                             = 0.3 + random.nextDouble() * 0.7;
 
-                    grid[row][col].plantTree(
-                            new Tree(spreadability)
+                    String species = clusterTypes[row / CLUSTER_SIZE][col / CLUSTER_SIZE];
+
+                    Tree tree = TreeFactory.createTree(
+                            species, spreadability
                     );
+
+                    grid[row][col].plantTree(tree);
                 }
             }
         }
+
     }
 
     public Cell[][] getGrid() {

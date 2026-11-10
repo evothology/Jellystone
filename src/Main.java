@@ -68,6 +68,10 @@ public class Main {
                             forest, timer, resetAction
                     );
 
+            controls.setCurrentDisaster(
+                    source.getClass().getSimpleName()
+            );
+
             forest.addObserver(panel);
             forest.addObserver(controls);
 
