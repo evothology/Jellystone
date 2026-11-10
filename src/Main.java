@@ -16,7 +16,7 @@ public class Main {
             String[] directions = {"NORTH", "SOUTH", "EAST", "WEST"};
             String randomDirection = directions[random.nextInt(directions.length)];
 
-            Wind wind = new Wind(30, randomDirection, 30, 20, 15);
+            Wind wind = new Wind(40, randomDirection, 30, 20, 15);
             forest.setWind(wind);
 
             System.out.println("Wind direction: " + randomDirection);

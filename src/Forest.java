@@ -2,7 +2,9 @@
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Forest {
@@ -101,10 +103,29 @@ public class Forest {
                 .count();
     }
 
+    public double getBurningPercentage() {
+        long livingTrees = countLivingTrees();
+
+        if (livingTrees == 0) {
+            return 0.0;
+        }
+
+        return (countBurningTrees() * 100.0) / livingTrees;
+    }
+
     public long countEmptyCells() {
         return streamCells()
                 .filter(cell -> !cell.hasTree())
                 .count();
+    }
+
+    public Map<String, Long> countTreesBySpecies() {
+        return streamCells()
+                .filter(Cell::hasTree)
+                .collect(Collectors.groupingBy(
+                        cell -> cell.getTree().getTreeType(),
+                        Collectors.counting()
+                ));
     }
 
     public void setWind(Wind wind) {

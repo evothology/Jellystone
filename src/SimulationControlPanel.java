@@ -11,6 +11,8 @@ public class SimulationControlPanel extends JPanel implements ForestObserver {
     private JLabel livingTreesLabel;
     private JLabel burningTreesLabel;
     private JLabel emptyCellsLabel;
+    private JLabel burningPercentageLabel;
+    private JLabel speciesLabel;
 
     private int ticks = 0;
 
@@ -74,8 +76,37 @@ public class SimulationControlPanel extends JPanel implements ForestObserver {
         emptyCellsLabel = new JLabel(
                 "Empty Cells: " + forest.countEmptyCells()
         );
+
         emptyCellsLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
         add(emptyCellsLabel);
+
+        add(Box.createVerticalStrut(10));
+
+        burningPercentageLabel = new JLabel(
+                String.format("Burning: %.1f%%", forest.getBurningPercentage())
+        );
+        burningPercentageLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        add(burningPercentageLabel);
+
+        add(Box.createVerticalStrut(15));
+
+        JLabel speciesHeading = new JLabel("Tree Species");
+        speciesHeading.setFont(new Font("Arial", Font.BOLD, 14));
+        speciesHeading.setAlignmentX(Component.LEFT_ALIGNMENT);
+        add(speciesHeading);
+
+        add(Box.createVerticalStrut(10));
+
+        speciesLabel = new JLabel(
+                "<html>" + forest.countTreesBySpecies()
+                        .toString()
+                        .replace("{", "")
+                        .replace("}", "")
+                        .replace(", ", "<br>")
+                        + "</html>"
+        );
+        speciesLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        add(speciesLabel);
 
         add(Box.createVerticalStrut(25));
 
@@ -129,6 +160,20 @@ public class SimulationControlPanel extends JPanel implements ForestObserver {
         emptyCellsLabel.setText(
                 "Empty Cells: " + forest.countEmptyCells()
         );
+
+        speciesLabel.setText(
+                "<html>" + forest.countTreesBySpecies()
+                        .toString()
+                        .replace("{", "")
+                        .replace("}", "")
+                        .replace(", ", "<br>") 
+                        + "</html>"
+        );
+
+        burningPercentageLabel.setText(
+                String.format("Burning: %.1f%%", forest.getBurningPercentage())
+        );
+
     }
 
     public void setCurrentDisaster(String disaster) {
