@@ -1,3 +1,6 @@
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class Forest {
@@ -11,6 +14,24 @@ public class Forest {
     private Wind wind;
 
     private Random random = new Random();
+
+    private List<ForestObserver> observers = new ArrayList<>();
+
+    public void addObserver(ForestObserver observer) {
+        if (observer != null && !observers.contains(observer)) {
+            observers.add(observer);
+        }
+    }
+
+    public void removeObserver(ForestObserver observer) {
+        observers.remove(observer);
+    }
+
+    private void notifyObservers() {
+        for (ForestObserver observer : observers) {
+            observer.onForestUpdated(this);
+        }
+    }
 
     public Forest(int rows, int columns) {
 
@@ -29,8 +50,8 @@ public class Forest {
                 // 80% chance of there being a tree
                 if (random.nextDouble() < 0.8) {
 
-                    double spreadability =
-                            0.3 + random.nextDouble() * 0.7;
+                    double spreadability
+                            = 0.3 + random.nextDouble() * 0.7;
 
                     grid[row][col].plantTree(
                             new Tree(spreadability)
@@ -54,11 +75,21 @@ public class Forest {
     }
 
     public void update() {
-
         spreadFire();
         advanceBurningTrees();
+        notifyObservers();
     }
 
+    public void reset() {
+        Forest freshForest = new Forest(grid.length, grid[0].length);
+        grid = freshForest.getGrid();
+
+        if (wind != null) {
+            wind.applyWind(this);
+        }
+
+        notifyObservers();
+    }
 
     private void advanceBurningTrees() {
 
@@ -83,11 +114,10 @@ public class Forest {
         }
     }
 
-    
     private void spreadFire() {
 
-        boolean[][] igniteNext =
-                new boolean[grid.length][grid[0].length];
+        boolean[][] igniteNext
+                = new boolean[grid.length][grid[0].length];
 
         for (int row = 0; row < grid.length; row++) {
 
@@ -95,8 +125,8 @@ public class Forest {
 
                 Cell cell = grid[row][col];
 
-                if (cell.hasTree() &&
-                    cell.getTree().isBurning()) {
+                if (cell.hasTree()
+                        && cell.getTree().isBurning()) {
 
                     trySpread(row, col, row - 1, col, igniteNext);
                     trySpread(row, col, row + 1, col, igniteNext);
@@ -123,16 +153,16 @@ public class Forest {
     }
 
     private void trySpread(
-        int sourceRow,
-        int sourceCol,
-        int row,
-        int col,
-        boolean[][] igniteNext) {
+            int sourceRow,
+            int sourceCol,
+            int row,
+            int col,
+            boolean[][] igniteNext) {
 
-        if (row < 0 ||
-            row >= grid.length ||
-            col < 0 ||
-            col >= grid[0].length) {
+        if (row < 0
+                || row >= grid.length
+                || col < 0
+                || col >= grid[0].length) {
 
             return;
         }
@@ -147,8 +177,8 @@ public class Forest {
             return;
         }
 
-        double chance =
-                target.getTree().getSpreadability();
+        double chance
+                = target.getTree().getSpreadability();
 
         if (wind != null) {
 
@@ -158,7 +188,7 @@ public class Forest {
                     col,
                     row
             );
-}
+        }
 
         chance += aridity * 0.2;
 

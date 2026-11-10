@@ -1,7 +1,8 @@
+
 import java.awt.*;
 import javax.swing.*;
 
-public class ForestPanel extends JPanel {
+public class ForestPanel extends JPanel implements ForestObserver {
 
     private Forest forest;
 
@@ -56,55 +57,57 @@ public class ForestPanel extends JPanel {
                 g.setColor(Color.BLACK);
 
                 g.fillRect(
-                    col * cellWidth,
-                    row * cellHeight,
-                    cellWidth,
-                    cellHeight
+                        col * cellWidth,
+                        row * cellHeight,
+                        cellWidth,
+                        cellHeight
                 );
 
-                if (lightning != null &&
-                    cell == currentLightningCell &&
-                    System.currentTimeMillis() - lightningStartTime < 3000) {
+                if (lightning != null
+                        && cell == currentLightningCell
+                        && System.currentTimeMillis() - lightningStartTime < 3000) {
 
                     g.drawImage(
-                        lightningImage,
-                        col * cellWidth + 2,
-                        row * cellHeight + 2,
-                        cellWidth - 4,
-                        cellHeight - 4,
-                        this
+                            lightningImage,
+                            col * cellWidth + 2,
+                            row * cellHeight + 2,
+                            cellWidth - 4,
+                            cellHeight - 4,
+                            this
                     );
-                }
-                else {
+                } else {
                     if (!cell.hasTree()) {
 
                         // Empty cell stays black
-
-                    }
-                    else if (cell.getTree().isBurning()) {
+                    } else if (cell.getTree().isBurning()) {
 
                         g.drawImage(
-                            fireImage,
-                            col * cellWidth + 2,
-                            row * cellHeight + 2,
-                            cellWidth - 4,
-                            cellHeight - 4,
-                            this
+                                fireImage,
+                                col * cellWidth + 2,
+                                row * cellHeight + 2,
+                                cellWidth - 4,
+                                cellHeight - 4,
+                                this
                         );
-                    }
-                    else {
+                    } else {
 
                         g.drawImage(
-                            treeImage,
-                            col * cellWidth + 2,
-                            row * cellHeight + 2,
-                            cellWidth - 4,
-                            cellHeight - 4,
-                            this
+                                treeImage,
+                                col * cellWidth + 2,
+                                row * cellHeight + 2,
+                                cellWidth - 4,
+                                cellHeight - 4,
+                                this
                         );
                     }
                 }
             }
         }
     }
+
+    @Override
+    public void onForestUpdated(Forest forest) {
+        repaint();
+    }
+
 }

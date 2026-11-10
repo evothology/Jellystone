@@ -1,64 +1,86 @@
-import javax.swing.*;
+
+import java.awt.*;
 import java.util.Random;
+import javax.swing.*;
 
 public class Main {
 
     public static void main(String[] args) {
 
-        Forest forest = new Forest(40, 60);
+        SwingUtilities.invokeLater(() -> {
 
-        Wind wind = new Wind(30, "EAST", 30, 20, 15);
-        forest.setWind(wind);
+            Forest forest = new Forest(40, 60);
 
+            Wind wind = new Wind(30, "EAST", 30, 20, 15);
+            forest.setWind(wind);
 
-        Random random = new Random();
+            Random random = new Random();
 
-        IgnitionSource source;
-        Lightning lightning = null;
+            IgnitionSource source;
+            Lightning lightning = null;
 
-        int choice = random.nextInt(3);
+            int choice = random.nextInt(3);
 
-        if (choice == 0) {
-            lightning = new Lightning();
-            source = lightning;
-            System.out.println("Ignition source: Lightning");
+            if (choice == 0) {
+                lightning = new Lightning();
+                source = lightning;
+                System.out.println("Ignition source: Lightning");
 
-        } else if (choice == 1) {
-            source = new Arson(20, 20);
-            System.out.println("Ignition source: Arson");
+            } else if (choice == 1) {
+                source = new Arson(20, 20);
+                System.out.println("Ignition source: Arson");
 
-        } else {
-            source = new Backburning(20);
-            System.out.println("Ignition source: Backburning");
-        }
+            } else {
+                source = new Backburning(20);
+                System.out.println("Ignition source: Backburning");
+            }
 
-        try {
-            source.ignite(forest);
-        }
-        catch (IllegalStateException | IllegalArgumentException e) {
-            System.out.println("Ignition failed: " + e.getMessage());
-        }
+            try {
+                source.ignite(forest);
+            } catch (IllegalStateException | IllegalArgumentException e) {
+                System.out.println(
+                        "Ignition failed: " + e.getMessage()
+                );
+            }
 
+            JFrame window = new JFrame("Forest Fire Simulation");
 
-        JFrame window = new JFrame("Forest Fire Simulation");
+            ForestPanel panel = new ForestPanel(forest, lightning);
 
-        ForestPanel panel = new ForestPanel(forest, lightning);
+            Timer timer = new Timer(500, event -> {
+                forest.update();
+            });
 
-        window.add(panel);
+            Runnable resetAction = () -> {
+                forest.reset();
+                try {
+                    source.ignite(forest);
+                } catch (IllegalStateException | IllegalArgumentException e) {
+                    System.out.println(
+                            "Ignition failed: " + e.getMessage()
+                    );
+                }
+                panel.repaint();
+            };
 
-        window.setSize(900, 600);
-        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        window.setLocationRelativeTo(null);
-        window.setVisible(true);
+            SimulationControlPanel controls
+                    = new SimulationControlPanel(
+                            forest, timer, resetAction
+                    );
 
-        Timer timer = new Timer(500, event -> {
+            forest.addObserver(panel);
+            forest.addObserver(controls);
 
-            forest.update();
+            window.setLayout(new BorderLayout());
+            window.add(panel, BorderLayout.CENTER);
+            window.add(controls, BorderLayout.EAST);
 
-            panel.repaint();
+            window.setSize(1150, 650);
+            window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            window.setLocationRelativeTo(null);
+            window.setVisible(true);
 
+            timer.start();
         });
-
-        timer.start();
     }
 }
