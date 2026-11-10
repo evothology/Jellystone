@@ -11,6 +11,21 @@ public class Main {
 
             Forest forest = new Forest(40, 60);
 
+            long sequentialStart = System.nanoTime();
+            long sequentialCount = forest.countLivingTrees();
+            long sequentialTime = System.nanoTime() - sequentialStart;
+
+            long parallelStart = System.nanoTime();
+            long parallelCount = forest.countLivingTreesParallel();
+            long parallelTime = System.nanoTime() - parallelStart;
+
+            System.out.println("=== Stream Comparison ===");
+            System.out.println("Sequential count: " + sequentialCount);
+            System.out.println("Parallel count: " + parallelCount);
+            System.out.println("Sequential time: " + sequentialTime + " ns");
+            System.out.println("Parallel time: " + parallelTime + " ns");
+            System.out.println("Results match: " + (sequentialCount == parallelCount));
+
             Random random = new Random();
 
             String[] directions = {"NORTH", "SOUTH", "EAST", "WEST"};

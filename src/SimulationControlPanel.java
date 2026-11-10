@@ -103,7 +103,7 @@ public class SimulationControlPanel extends JPanel implements ForestObserver {
                         .replace("{", "")
                         .replace("}", "")
                         .replace(", ", "<br>")
-                        + "</html>"
+                + "</html>"
         );
         speciesLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
         add(speciesLabel);
@@ -113,11 +113,12 @@ public class SimulationControlPanel extends JPanel implements ForestObserver {
         JButton pauseButton = new JButton("Pause");
         JButton resumeButton = new JButton("Resume");
         JButton resetButton = new JButton("Reset Forest");
+        JButton summaryButton = new JButton("Simulation Summary");
 
         Dimension buttonSize = new Dimension(190, 35);
 
         for (JButton button
-                : new JButton[]{pauseButton, resumeButton, resetButton}) {
+                : new JButton[]{pauseButton, resumeButton, resetButton, summaryButton}) {
 
             button.setMaximumSize(buttonSize);
             button.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -142,6 +143,27 @@ public class SimulationControlPanel extends JPanel implements ForestObserver {
             tickLabel.setText("Ticks: 0");
             statusLabel.setText("Status: Paused");
         });
+
+        summaryButton.addActionListener(event -> {
+
+            String summary = "Simulation Summary\n\n"
+                    + "Total Ticks: " + ticks + "\n"
+                    + "Living Trees: " + forest.countLivingTrees() + "\n"
+                    + "Burning Trees: " + forest.countBurningTrees() + "\n"
+                    + "Empty Cells: " + forest.countEmptyCells() + "\n"
+                    + String.format(
+                            "Burning Percentage: %.1f%%",
+                            forest.getBurningPercentage()
+                    );
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    summary,
+                    "Simulation Summary",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+        });
+
     }
 
     @Override
@@ -166,8 +188,8 @@ public class SimulationControlPanel extends JPanel implements ForestObserver {
                         .toString()
                         .replace("{", "")
                         .replace("}", "")
-                        .replace(", ", "<br>") 
-                        + "</html>"
+                        .replace(", ", "<br>")
+                + "</html>"
         );
 
         burningPercentageLabel.setText(

@@ -89,8 +89,19 @@ public class Forest {
                 .flatMap(Arrays::stream);
     }
 
+    public Stream<Cell> parallelStreamCells() {
+        return streamCells().parallel();
+    }
+
     public long countLivingTrees() {
         return streamCells()
+                .filter(Cell::hasTree)
+                .filter(cell -> cell.getTree().isAlive())
+                .count();
+    }
+
+    public long countLivingTreesParallel() {
+        return parallelStreamCells()
                 .filter(Cell::hasTree)
                 .filter(cell -> cell.getTree().isAlive())
                 .count();
