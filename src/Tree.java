@@ -1,6 +1,8 @@
+
 public class Tree implements Burnable {
 
     private boolean burning;
+    private TreeState state;
     private double spreadability;
     private double burnIntensity;
     private boolean alive;
@@ -22,6 +24,7 @@ public class Tree implements Burnable {
         validateBurnIntensityFactor(burnIntensityFactor);
 
         this.burning = false;
+        this.state = new HealthyState();
         this.spreadability = spreadability;
         this.burnIntensity = 0.0;
         this.burnIntensityFactor = burnIntensityFactor;
@@ -32,23 +35,38 @@ public class Tree implements Burnable {
 
     @Override
     public void ignite() {
-        if (!alive) {
-            return;
-        }
-
-        burning = true;
-        burnIntensity = burnIntensityFactor;
+        state.ignite(this, 1.0);
     }
 
     // OVERLOADED version
     public void ignite(double severity) {
-        if (alive && severity >= 0.5) {
-            burning = true;
-            burnIntensity = Math.max(
-                    burnIntensity,
-                    severity * burnIntensityFactor
-            );
+        state.ignite(this, severity);
+    }
+
+    public void startBurning(double severity) {
+        if (!alive || severity < 0.5) {
+            return;
         }
+
+        burning = true;
+        burnIntensity = Math.max(
+                burnIntensity,
+                severity * burnIntensityFactor
+        );
+
+        setState(new BurningState());
+    }
+
+    public void setState(TreeState newState) {
+        if (newState == null) {
+            throw new IllegalArgumentException("Tree state cannot be null");
+        }
+
+        state = newState;
+    }
+
+    public String getStateName() {
+        return state.getName();
     }
 
     public double getHealth() {
@@ -81,6 +99,7 @@ public class Tree implements Burnable {
     public boolean isBurning() {
         return burning;
     }
+
     public boolean isAlive() {
         return alive;
     }
@@ -96,20 +115,21 @@ public class Tree implements Burnable {
     public void extinguish() {
         burning = false;
         burnIntensity = 0.0;
+
+        if (alive) {
+            setState(new HealthyState());
+        }
     }
 
     public void kill() {
         alive = false;
         burning = false;
         burnIntensity = 0.0;
+        setState(new BurntState());
     }
 
     public void advanceBurning() {
-        if (!burning || !alive) {
-            return;
-        }
-
-        damage(30.0 * burnIntensity);
+        state.advance(this);
     }
 
     @Override
@@ -131,7 +151,6 @@ public class Tree implements Burnable {
     }
 
     //exceptions
-
     private static void validateSpreadability(double spreadability) {
         if (!Double.isFinite(spreadability)
                 || spreadability < 0.0
