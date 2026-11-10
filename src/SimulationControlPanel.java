@@ -7,6 +7,11 @@ public class SimulationControlPanel extends JPanel implements ForestObserver {
     private JLabel statusLabel;
     private JLabel tickLabel;
     private JLabel disasterLabel;
+
+    private JLabel livingTreesLabel;
+    private JLabel burningTreesLabel;
+    private JLabel emptyCellsLabel;
+
     private int ticks = 0;
 
     public SimulationControlPanel(
@@ -40,6 +45,37 @@ public class SimulationControlPanel extends JPanel implements ForestObserver {
         disasterLabel = new JLabel("Current Disaster: None");
         disasterLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
         add(disasterLabel);
+
+        add(Box.createVerticalStrut(20));
+
+        JLabel statisticsHeading = new JLabel("Forest Statistics");
+        statisticsHeading.setFont(new Font("Arial", Font.BOLD, 14));
+        statisticsHeading.setAlignmentX(Component.LEFT_ALIGNMENT);
+        add(statisticsHeading);
+
+        add(Box.createVerticalStrut(10));
+
+        livingTreesLabel = new JLabel(
+                "Living Trees: " + forest.countLivingTrees()
+        );
+        livingTreesLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        add(livingTreesLabel);
+
+        add(Box.createVerticalStrut(10));
+
+        burningTreesLabel = new JLabel(
+                "Burning Trees: " + forest.countBurningTrees()
+        );
+        burningTreesLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        add(burningTreesLabel);
+
+        add(Box.createVerticalStrut(10));
+
+        emptyCellsLabel = new JLabel(
+                "Empty Cells: " + forest.countEmptyCells()
+        );
+        emptyCellsLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        add(emptyCellsLabel);
 
         add(Box.createVerticalStrut(25));
 
@@ -81,6 +117,18 @@ public class SimulationControlPanel extends JPanel implements ForestObserver {
     public void onForestUpdated(Forest forest) {
         ticks++;
         tickLabel.setText("Ticks: " + ticks);
+
+        livingTreesLabel.setText(
+                "Living Trees: " + forest.countLivingTrees()
+        );
+
+        burningTreesLabel.setText(
+                "Burning Trees: " + forest.countBurningTrees()
+        );
+
+        emptyCellsLabel.setText(
+                "Empty Cells: " + forest.countEmptyCells()
+        );
     }
 
     public void setCurrentDisaster(String disaster) {

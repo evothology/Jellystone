@@ -1,7 +1,8 @@
-import javax.swing.JPanel;
-import java.awt.*;
 
-public class WindVisualization extends JPanel {
+import java.awt.*;
+import javax.swing.JPanel;
+
+public class WindVisualization extends JPanel implements ForestObserver {
 
     private Forest forest;
 
@@ -12,6 +13,7 @@ public class WindVisualization extends JPanel {
 
         this.forest = forest;
         setOpaque(false);
+        setFocusable(false);
     }
 
     @Override
@@ -26,7 +28,7 @@ public class WindVisualization extends JPanel {
 
         Graphics2D borderGraphics = (Graphics2D) graphics.create();
         borderGraphics.setColor(new Color(0, 160, 255));
-        borderGraphics.setStroke(new BasicStroke(2.0f));
+        borderGraphics.setStroke(new BasicStroke(1.0f));
 
         int cellWidth = getWidth() / grid[0].length;
         int cellHeight = getHeight() / grid.length;
@@ -48,4 +50,10 @@ public class WindVisualization extends JPanel {
 
         borderGraphics.dispose();
     }
+
+    @Override
+    public void onForestUpdated(Forest forest) {
+        repaint();
+    }
+
 }

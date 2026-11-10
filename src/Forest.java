@@ -1,7 +1,9 @@
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Stream;
 
 public class Forest {
 
@@ -78,6 +80,31 @@ public class Forest {
 
     public Cell[][] getGrid() {
         return grid;
+    }
+
+    public Stream<Cell> streamCells() {
+        return Arrays.stream(grid)
+                .flatMap(Arrays::stream);
+    }
+
+    public long countLivingTrees() {
+        return streamCells()
+                .filter(Cell::hasTree)
+                .filter(cell -> cell.getTree().isAlive())
+                .count();
+    }
+
+    public long countBurningTrees() {
+        return streamCells()
+                .filter(Cell::hasTree)
+                .filter(cell -> cell.getTree().isBurning())
+                .count();
+    }
+
+    public long countEmptyCells() {
+        return streamCells()
+                .filter(cell -> !cell.hasTree())
+                .count();
     }
 
     public void setWind(Wind wind) {

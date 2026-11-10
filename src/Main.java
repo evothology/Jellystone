@@ -11,10 +11,15 @@ public class Main {
 
             Forest forest = new Forest(40, 60);
 
-            Wind wind = new Wind(30, "EAST", 30, 20, 15);
+            Random random = new Random();
+
+            String[] directions = {"NORTH", "SOUTH", "EAST", "WEST"};
+            String randomDirection = directions[random.nextInt(directions.length)];
+
+            Wind wind = new Wind(30, randomDirection, 30, 20, 15);
             forest.setWind(wind);
 
-            Random random = new Random();
+            System.out.println("Wind direction: " + randomDirection);
 
             IgnitionSource source;
             Lightning lightning = null;
@@ -75,8 +80,29 @@ public class Main {
             forest.addObserver(panel);
             forest.addObserver(controls);
 
+            JPanel forestContainer = new JPanel() {
+                @Override
+                public boolean isOptimizedDrawingEnabled() {
+                    return false;
+                }
+            };
+
+            forestContainer.setLayout(new OverlayLayout(forestContainer));
+
+            WindVisualization windOverlay = new WindVisualization(forest);
+            forest.addObserver(windOverlay);
+
+            windOverlay.setAlignmentX(0.5f);
+            windOverlay.setAlignmentY(0.5f);
+
+            panel.setAlignmentX(0.5f);
+            panel.setAlignmentY(0.5f);
+
+            forestContainer.add(windOverlay);
+            forestContainer.add(panel);
+
             window.setLayout(new BorderLayout());
-            window.add(panel, BorderLayout.CENTER);
+            window.add(forestContainer, BorderLayout.CENTER);
             window.add(controls, BorderLayout.EAST);
 
             window.setSize(1150, 650);
